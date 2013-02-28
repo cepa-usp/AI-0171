@@ -1,11 +1,14 @@
 ﻿package 
 {
 	import BaseAssets.BaseMain;
+	import BaseAssets.events.BaseEvent;
+	import BaseAssets.tutorial.CaixaTexto;
 	import cepa.graph.DataStyle;
 	import cepa.graph.GraphFunction;
 	import cepa.graph.rectangular.SimpleGraph;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.FocusEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
@@ -13,6 +16,7 @@
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.utils.Timer;
 	/**
 	 * ...
@@ -40,6 +44,9 @@
 		private var respVermelho:Point = new Point();
 		private var respVerde:Point = new Point();
 		
+		private var greyFormat:TextFormat = new TextFormat("Arial", 13, 0x8A8A8A);
+		private var normalFormat:TextFormat = new TextFormat("Arial", 13, 0x000000);
+		
 		public function Main() 
 		{
 			
@@ -57,15 +64,48 @@
 			greenA.restrict = "0123456789";
 			greenB.restrict = "0123456789";
 			
-			//iniciaTutorial();
+			redA.addEventListener(FocusEvent.FOCUS_IN, focusIn);
+			redB.addEventListener(FocusEvent.FOCUS_IN, focusIn);
+			greenA.addEventListener(FocusEvent.FOCUS_IN, focusIn);
+			greenB.addEventListener(FocusEvent.FOCUS_IN, focusIn);
+			
+			iniciaTutorial();
+		}
+		
+		private function focusIn(e:FocusEvent):void 
+		{
+			var txt:TextField = TextField(e.target);
+			txt.addEventListener(FocusEvent.FOCUS_OUT, focusOut);
+			if (txt.text == "A" || txt.text == "B") {
+				txt.defaultTextFormat = normalFormat;
+				txt.text = "";
+			}
+		}
+		
+		private function focusOut(e:FocusEvent):void 
+		{
+			var txt:TextField = TextField(e.target);
+			txt.removeEventListener(FocusEvent.FOCUS_OUT, focusOut);
+			if (txt.text == "") {
+				txt.defaultTextFormat = greyFormat;
+				if (txt == redA) {
+					txt.text = "A";
+				}else if (txt == redB) {
+					txt.text = "B";
+				}else if (txt == greenA) {
+					txt.text = "A";
+				}else if (txt == greenB) {
+					txt.text = "B";
+				}
+			}
 		}
 		
 		private function createGraph():void 
 		{
 			xmin = 	-5.5;
 			xmax = 	5.5;
-			var xsize:Number = 	670;
-			var ysize:Number = 	370;
+			var xsize:Number = 	640;
+			var ysize:Number = 	395;
 			var yRange:Number = Math.abs((xmin - xmax) * ysize / xsize);
 			var ymin:Number = 	-yRange / 2;
 			var ymax:Number = 	yRange / 2;
@@ -73,8 +113,8 @@
 			var tickSize:Number = 2;
 			
 			graph = new SimpleGraph(xmin, xmax, xsize, ymin, ymax, ysize);
-			graph.x = (stage.stageWidth - xsize) / 2;
-			graph.y = 50;
+			graph.x = ((stage.stageWidth - xsize) / 2) + 5;
+			graph.y = 48;
 			
 			graph.enableTicks(SimpleGraph.AXIS_X, true);
 			graph.enableTicks(SimpleGraph.AXIS_Y, true);
@@ -151,13 +191,20 @@
 			
 			certoErradoVermelho.visible = false;
 			respostaVermelho.visible = false;
-			redA.text = "";
-			redB.text = "";
-			TextField(redA).selectable = true;
-			TextField(redB).selectable = true;
+			resetRedTxt();
 				
 			lock(reiniciaVermelha);
 			unlock(finalizaVermelha);
+		}
+		
+		private function resetRedTxt():void
+		{
+			TextField(redA).defaultTextFormat = greyFormat;
+			TextField(redB).defaultTextFormat = greyFormat;
+			redA.text = "A";
+			redB.text = "B";
+			TextField(redA).selectable = true;
+			TextField(redB).selectable = true;
 		}
 		
 		private function sortVerde(e:MouseEvent = null):void 
@@ -172,13 +219,20 @@
 			
 			certoErradoVerde.visible = false;
 			respostaVerde.visible = false;
-			greenA.text = "";
-			greenB.text = "";
-			TextField(greenA).selectable = true;
-			TextField(greenB).selectable = true;
+			resetGreenTxt();
 			
 			lock(reiniciaVerde);
 			unlock(finalizaVerde);
+		}
+		
+		private function resetGreenTxt():void
+		{
+			TextField(greenA).defaultTextFormat = greyFormat;
+			TextField(greenB).defaultTextFormat = greyFormat;
+			greenA.text = "A";
+			greenB.text = "B";
+			TextField(greenA).selectable = true;
+			TextField(greenB).selectable = true;
 		}
 		
 		private function getFunctionVermelha():GraphFunction 
@@ -217,7 +271,7 @@
 		
 		private function finalVermelho(e:MouseEvent = null):void
 		{
-			if(redA.text != "" && redB.text != ""){
+			if(redA.text != "A" && redB.text != "B"){
 				var respA:int = int(redA.text);
 				var respB:int = int(redB.text);
 				
@@ -242,7 +296,7 @@
 		
 		private function finalVerde(e:MouseEvent = null):void
 		{
-			if(greenA.text != "" && greenB.text != ""){
+			if(greenA.text != "A" && greenB.text != "B"){
 				var respA:int = int(greenA.text);
 				var respB:int = int(greenB.text);
 				
@@ -263,6 +317,76 @@
 			}else {
 				feedbackScreen.setText("Você precisa preencher os 2 campos antes de avaliar.");
 			}
+		}
+		
+		//---------------- Tutorial -----------------------
+		
+		private var balao:CaixaTexto;
+		private var pointsTuto:Array;
+		private var tutoBaloonPos:Array;
+		private var tutoPos:int;
+		private var tutoSequence:Array;
+		
+		override public function iniciaTutorial(e:MouseEvent = null):void  
+		{
+			blockAI();
+			
+			tutoPos = 0;
+			if(balao == null){
+				balao = new CaixaTexto();
+				layerTuto.addChild(balao);
+				balao.visible = false;
+				
+				tutoSequence = ["Veja aqui as orientações.",
+								"São apresentadas duas retas (vermelha e verde) no plano cartesiano...",
+								"você pode arrastá-lo para melhor visualização dos pontos.",
+								"Digite os valores de A e B na equação da reta vermelha...",
+								"e os valores de A e B na equação da reta verde.",
+								"Ao finalizar clique em avaliar.",
+								"Pressione \"Nove reta\" para sortear uma nova equação."];
+				
+				pointsTuto = 	[new Point(650, 535),
+								new Point(200 , 250),
+								new Point(200 , 300),
+								new Point(165 , 470),
+								new Point(495 , 470),
+								new Point(200 , 475),
+								new Point(200 , 400)];
+								
+				tutoBaloonPos = [[CaixaTexto.RIGHT, CaixaTexto.LAST],
+								["", ""],
+								["", ""],
+								[CaixaTexto.BOTTON, CaixaTexto.FIRST],
+								[CaixaTexto.BOTTON, CaixaTexto.LAST],
+								["", ""],
+								["", ""]];
+			}
+			balao.removeEventListener(BaseEvent.NEXT_BALAO, closeBalao);
+			
+			balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
+			balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
+			balao.addEventListener(BaseEvent.NEXT_BALAO, closeBalao);
+			balao.addEventListener(BaseEvent.CLOSE_BALAO, iniciaAi);
+		}
+		
+		private function closeBalao(e:Event):void 
+		{
+			tutoPos++;
+			if (tutoPos >= tutoSequence.length) {
+				balao.removeEventListener(BaseEvent.NEXT_BALAO, closeBalao);
+				balao.visible = false;
+				iniciaAi(null);
+			}else {
+				balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
+				balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
+			}
+		}
+		
+		private function iniciaAi(e:BaseEvent):void 
+		{
+			balao.removeEventListener(BaseEvent.CLOSE_BALAO, iniciaAi);
+			balao.removeEventListener(BaseEvent.NEXT_BALAO, closeBalao);
+			unblockAI();
 		}
 		
 	}

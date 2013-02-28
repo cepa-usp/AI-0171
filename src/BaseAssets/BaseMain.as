@@ -121,18 +121,18 @@ package BaseAssets
 			layerAtividade = new Sprite();
 			
 			layerBlock.name = "block";
-			layerBlock.graphics.beginFill(0xFFFFFF, 0);
+			layerBlock.graphics.beginFill(0xFFFFFF, 0.2);
 			layerBlock.graphics.drawRect(0, 0, rect.width, rect.height);
 			layerBlock.visible = false;
 			
-			super.addChild(layerAtividade);
-			super.addChild(layerMenu);
-			super.addChild(layerBlock);
-			super.addChild(layerTuto);
-			super.addChild(layerGlass);
-			super.addChild(layerDialogo);
-			super.addChild(layerDebug);
-			super.addChild(layerBorda);
+			stage.addChild(layerAtividade);
+			stage.addChild(layerMenu);
+			stage.addChild(layerBlock);
+			stage.addChild(layerTuto);
+			stage.addChild(layerGlass);
+			stage.addChild(layerDialogo);
+			stage.addChild(layerDebug);
+			stage.addChild(layerBorda);
 		}
 		
 		/**
