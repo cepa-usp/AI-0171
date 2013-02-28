@@ -17,6 +17,7 @@
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
 	import flash.utils.Timer;
 	/**
 	 * ...
@@ -44,7 +45,8 @@
 		private var respVermelho:Point = new Point();
 		private var respVerde:Point = new Point();
 		
-		private var greyFormat:TextFormat = new TextFormat("Arial", 13, 0x8A8A8A);
+		private var greyFormatA:TextFormat = new TextFormat("Arial", 13, 0x8A8A8A);
+		private var greyFormatB:TextFormat = new TextFormat("Arial", 13, 0x8A8A8A);
 		private var normalFormat:TextFormat = new TextFormat("Arial", 13, 0x000000);
 		
 		public function Main() 
@@ -54,6 +56,10 @@
 		
 		override protected function init():void 
 		{
+			greyFormatA.align = TextFormatAlign.RIGHT;
+			greyFormatB.align = TextFormatAlign.LEFT;
+			normalFormat.align = TextFormatAlign.LEFT;
+			
 			createGraph();
 			addListeners();
 			sortVermelho();
@@ -63,6 +69,13 @@
 			redB.restrict = "0123456789";
 			greenA.restrict = "0123456789";
 			greenB.restrict = "0123456789";
+			
+			redA.tabIndex = 0;
+			redB.tabIndex = 1;
+			finalizaVermelha.tabIndex = 2;
+			greenA.tabIndex = 3;
+			greenB.tabIndex = 4;
+			finalizaVerde.tabIndex = 5;
 			
 			redA.addEventListener(FocusEvent.FOCUS_IN, focusIn);
 			redB.addEventListener(FocusEvent.FOCUS_IN, focusIn);
@@ -76,7 +89,7 @@
 		{
 			var txt:TextField = TextField(e.target);
 			txt.addEventListener(FocusEvent.FOCUS_OUT, focusOut);
-			if (txt.text == "A" || txt.text == "B") {
+			if (txt.text == "a" || txt.text == "b") {
 				txt.defaultTextFormat = normalFormat;
 				txt.text = "";
 			}
@@ -87,15 +100,18 @@
 			var txt:TextField = TextField(e.target);
 			txt.removeEventListener(FocusEvent.FOCUS_OUT, focusOut);
 			if (txt.text == "") {
-				txt.defaultTextFormat = greyFormat;
 				if (txt == redA) {
-					txt.text = "A";
+					txt.defaultTextFormat = greyFormatA;
+					txt.text = "a";
 				}else if (txt == redB) {
-					txt.text = "B";
+					txt.defaultTextFormat = greyFormatB;
+					txt.text = "b";
 				}else if (txt == greenA) {
-					txt.text = "A";
+					txt.defaultTextFormat = greyFormatA;
+					txt.text = "a";
 				}else if (txt == greenB) {
-					txt.text = "B";
+					txt.defaultTextFormat = greyFormatB;
+					txt.text = "b";
 				}
 			}
 		}
@@ -127,6 +143,9 @@
 			graph.pan = true;
 			graph.buttonMode = true;
 			graph.addEventListener("initPan", startPan);
+			graph.setAxesNameFormat(new TextFormat("arial", 12, 0x000000));
+			graph.setAxisName(SimpleGraph.AXIS_X, "x");
+			graph.setAxisName(SimpleGraph.AXIS_Y, "Y");
 			
 			layerAtividade.addChild(graph);
 			graph.draw();
@@ -194,15 +213,15 @@
 			resetRedTxt();
 				
 			lock(reiniciaVermelha);
-			unlock(finalizaVermelha);
+			//unlock(finalizaVermelha);
 		}
 		
 		private function resetRedTxt():void
 		{
-			TextField(redA).defaultTextFormat = greyFormat;
-			TextField(redB).defaultTextFormat = greyFormat;
-			redA.text = "A";
-			redB.text = "B";
+			TextField(redA).defaultTextFormat = greyFormatA;
+			TextField(redB).defaultTextFormat = greyFormatB;
+			redA.text = "a";
+			redB.text = "b";
 			TextField(redA).selectable = true;
 			TextField(redB).selectable = true;
 		}
@@ -222,15 +241,15 @@
 			resetGreenTxt();
 			
 			lock(reiniciaVerde);
-			unlock(finalizaVerde);
+			//unlock(finalizaVerde);
 		}
 		
 		private function resetGreenTxt():void
 		{
-			TextField(greenA).defaultTextFormat = greyFormat;
-			TextField(greenB).defaultTextFormat = greyFormat;
-			greenA.text = "A";
-			greenB.text = "B";
+			TextField(greenA).defaultTextFormat = greyFormatA;
+			TextField(greenB).defaultTextFormat = greyFormatB;
+			greenA.text = "a";
+			greenB.text = "b";
 			TextField(greenA).selectable = true;
 			TextField(greenB).selectable = true;
 		}
@@ -271,51 +290,81 @@
 		
 		private function finalVermelho(e:MouseEvent = null):void
 		{
-			if(redA.text != "A" && redB.text != "B"){
+			if(redA.text != "a" && redB.text != "b"){
 				var respA:int = int(redA.text);
 				var respB:int = int(redB.text);
+				var feed:String = "";
 				
 				if (respA == respVermelho.x && respB == respVermelho.y) {
 					//Certo
+					feed = "Correto!";
 					certoErradoVermelho.gotoAndStop(2);
 				}else {
 					//Errado
 					certoErradoVermelho.gotoAndStop(1);
-					respostaVermelho.resp.text = "Resposta: y(x)=" + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y;
+					respostaVermelho.resp.text = "Resposta: y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y;
 					respostaVermelho.visible = true;
+					
+					if (respA != respVermelho.x && respB != respVermelho.y) {
+						//Errou os 2
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+					}else if (respA == respVermelho.x) {
+						//Acertou a
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
+					}else {
+						//Acertou b
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+					}
 				}
+				feedbackScreen.setText(feed);
+				
 				certoErradoVermelho.visible = true;
 				TextField(redA).selectable = false;
 				TextField(redB).selectable = false;
 				unlock(reiniciaVermelha);
-				lock(finalizaVermelha);
+				//lock(finalizaVermelha);
 			}else {
-				feedbackScreen.setText("Você precisa preencher os 2 campos antes de avaliar.");
+				feedbackScreen.setText("Informe ambos os coeficientes linear e angular para avaliar.");
 			}
 		}
 		
 		private function finalVerde(e:MouseEvent = null):void
 		{
-			if(greenA.text != "A" && greenB.text != "B"){
+			if(greenA.text != "a" && greenB.text != "b"){
 				var respA:int = int(greenA.text);
 				var respB:int = int(greenB.text);
+				var feed:String = "";
 				
 				if (respA == respVerde.x && respB == respVerde.y) {
 					//Certo
+					feed = "Correto!";
 					certoErradoVerde.gotoAndStop(2);
 				}else {
 					//Errado
 					certoErradoVerde.gotoAndStop(1);
-					respostaVerde.resp.text = "Resposta: y(x)=" + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y;
+					respostaVerde.resp.text = "Resposta: y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y;
 					respostaVerde.visible = true;
+					
+					if (respA != respVerde.x && respB != respVerde.y) {
+						//Errou os 2
+						feed = "Ops! A resposta esperada é y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+					}else if (respA == respVerde.x) {
+						//Acertou a
+						feed = "Ops! A resposta esperada é y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
+					}else {
+						//Acertou b
+						feed = "Ops! A resposta esperada é y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+					}
 				}
+				feedbackScreen.setText(feed);
+				
 				certoErradoVerde.visible = true;
 				TextField(greenA).selectable = false;
 				TextField(greenB).selectable = false;
 				unlock(reiniciaVerde);
-				lock(finalizaVerde);
+				//lock(finalizaVerde);
 			}else {
-				feedbackScreen.setText("Você precisa preencher os 2 campos antes de avaliar.");
+				feedbackScreen.setText("Informe ambos os coeficientes linear e angular para avaliar.");
 			}
 		}
 		

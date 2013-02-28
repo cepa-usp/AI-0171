@@ -195,7 +195,7 @@ package BaseAssets
 		{
 			bt.filters = [GRAYSCALE_FILTER];
 			bt.alpha = 0.5;
-			bt.mouseEnabled = false;
+			bt.mouseEnabled = false;			
 		}
 		
 		protected function unlock(bt:*):void
