@@ -58,7 +58,6 @@
 		{
 			greyFormatA.align = TextFormatAlign.RIGHT;
 			greyFormatB.align = TextFormatAlign.LEFT;
-			normalFormat.align = TextFormatAlign.LEFT;
 			
 			createGraph();
 			addListeners();
