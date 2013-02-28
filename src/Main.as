@@ -12,6 +12,7 @@
 	import flash.filters.ColorMatrixFilter;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.text.TextField;
 	import flash.utils.Timer;
 	/**
 	 * ...
@@ -50,6 +51,11 @@
 			addListeners();
 			sortVermelho();
 			sortVerde();
+			
+			redA.restrict = "0123456789";
+			redB.restrict = "0123456789";
+			greenA.restrict = "0123456789";
+			greenB.restrict = "0123456789";
 			
 			//iniciaTutorial();
 		}
@@ -147,7 +153,9 @@
 			respostaVermelho.visible = false;
 			redA.text = "";
 			redB.text = "";
-			
+			TextField(redA).selectable = true;
+			TextField(redB).selectable = true;
+				
 			lock(reiniciaVermelha);
 			unlock(finalizaVermelha);
 		}
@@ -166,6 +174,8 @@
 			respostaVerde.visible = false;
 			greenA.text = "";
 			greenB.text = "";
+			TextField(greenA).selectable = true;
+			TextField(greenB).selectable = true;
 			
 			lock(reiniciaVerde);
 			unlock(finalizaVerde);
@@ -221,7 +231,8 @@
 					respostaVermelho.visible = true;
 				}
 				certoErradoVermelho.visible = true;
-				
+				TextField(redA).selectable = false;
+				TextField(redB).selectable = false;
 				unlock(reiniciaVermelha);
 				lock(finalizaVermelha);
 			}else {
@@ -245,7 +256,8 @@
 					respostaVerde.visible = true;
 				}
 				certoErradoVerde.visible = true;
-				
+				TextField(greenA).selectable = false;
+				TextField(greenB).selectable = false;
 				unlock(reiniciaVerde);
 				lock(finalizaVerde);
 			}else {
