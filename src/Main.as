@@ -386,28 +386,31 @@
 				balao.visible = false;
 				
 				tutoSequence = ["Veja aqui as orientações.",
-								"São apresentadas duas retas (vermelha e verde) no plano cartesiano...",
-								"você pode arrastá-lo para melhor visualização dos pontos.",
-								"Digite os valores de A e B na equação da reta vermelha...",
-								"e os valores de A e B na equação da reta verde.",
-								"Ao finalizar clique em avaliar.",
-								"Pressione \"Nove reta\" para sortear uma nova equação."];
+								"Os gráficos de duas funções do primeiro grau, escolhidas aleatoriamente pelo software, são exibidos aqui (uma em vermelho e outra em verde).",
+								"Caso não esteja vendo algum desses gráficos, arraste o plano cartesiano para cima ou para baixo.",
+								"Analise os gráficos acima e, com base neles, indique nos campos apropriados abaixo os valores dos coeficientes linear e angular.",
+								"Pressione \"avaliar\" para verificar sua resposta.",
+								"Pressione \"nova reta\" para que o software exiba um novo gráfico.",
+								"Faça o mesmo para a reta verde.",
+								"Pressione este botão para reiniciar este tutorial."];
 				
 				pointsTuto = 	[new Point(650, 535),
-								new Point(200 , 250),
-								new Point(200 , 300),
-								new Point(165 , 470),
-								new Point(495 , 470),
-								new Point(200 , 475),
-								new Point(200 , 400)];
+								new Point(180 , 180),
+								new Point(250 , 250),
+								new Point(165 , 475),
+								new Point(170 , 564),
+								new Point(262 , 564),
+								new Point(490 , 475),
+								new Point(650 , 490)];
 								
 				tutoBaloonPos = [[CaixaTexto.RIGHT, CaixaTexto.LAST],
 								["", ""],
 								["", ""],
 								[CaixaTexto.BOTTON, CaixaTexto.FIRST],
+								[CaixaTexto.BOTTON, CaixaTexto.FIRST],
+								[CaixaTexto.BOTTON, CaixaTexto.CENTER],
 								[CaixaTexto.BOTTON, CaixaTexto.LAST],
-								["", ""],
-								["", ""]];
+								[CaixaTexto.RIGHT, CaixaTexto.CENTER]];
 			}
 			balao.removeEventListener(BaseEvent.NEXT_BALAO, closeBalao);
 			
