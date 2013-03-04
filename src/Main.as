@@ -47,48 +47,67 @@
 		private var respVermelho:Point = new Point();
 		private var respVerde:Point = new Point();
 		
-		private var greyFormatA:TextFormat = new TextFormat("Arial", 13, 0x8A8A8A);
-		private var greyFormatB:TextFormat = new TextFormat("Arial", 13, 0x8A8A8A);
-		private var normalFormat:TextFormat = new TextFormat("Arial", 13, 0x000000);
+		private var greyFormatA:TextFormat = new TextFormat("Times New Roman", 13, 0x8A8A8A);
+		private var greyFormatB:TextFormat = new TextFormat("Times New Roman", 13, 0x8A8A8A);
+		private var normalFormat:TextFormat = new TextFormat("Times New Roman", 13, 0x000000);
 		
 		public function Main() 
 		{
 			
 		}
 		
+		private var widHeiRelacao:Point = new Point();
 		override protected function init():void 
 		{
 			greyFormatA.align = TextFormatAlign.RIGHT;
 			greyFormatB.align = TextFormatAlign.LEFT;
 			
 			layerDialogo.addChild(escolheRelacao);
+			//widHeiRelacao.x = escolheRelacao.width;
+			//widHeiRelacao.y = escolheRelacao.height;
 			escolheRelacao.visible = false;
-			escolheRelacao.scaleX = 0;
-			escolheRelacao.scaleY = 0;
+			escolheRelacao.alpha = 0;
+			//escolheRelacao.scaleX = 0;
+			//escolheRelacao.scaleY = 0;
+			//escolheRelacao.width = 0;
+			//escolheRelacao.height = 0;
 			
 			createGraph();
 			addListeners();
 			sortVermelho();
 			sortVerde();
 			
-			redA.restrict = "-0123456789";
-			redB.restrict = "-0123456789";
-			greenA.restrict = "-0123456789";
-			greenB.restrict = "-0123456789";
+			redA.restrict = "\\-0123456789.,";
+			redB.restrict = "\\-0123456789.,";
+			greenA.restrict = "\\-0123456789.,";
+			greenB.restrict = "\\-0123456789.,";
 			
-			redA.tabIndex = 0;
-			redB.tabIndex = 1;
-			finalizaVermelha.tabIndex = 2;
-			greenA.tabIndex = 3;
-			greenB.tabIndex = 4;
-			finalizaVerde.tabIndex = 5;
+			redA.tabIndex = 1;
+			redB.tabIndex = 2;
+			finalizaVermelha.tabIndex = 3;
+			greenA.tabIndex = 4;
+			greenB.tabIndex = 5;
+			finalizaVerde.tabIndex = 6;
 			
 			redA.addEventListener(FocusEvent.FOCUS_IN, focusIn);
 			redB.addEventListener(FocusEvent.FOCUS_IN, focusIn);
 			greenA.addEventListener(FocusEvent.FOCUS_IN, focusIn);
 			greenB.addEventListener(FocusEvent.FOCUS_IN, focusIn);
 			
+			redA.addEventListener(Event.CHANGE, changeText);
+			redB.addEventListener(Event.CHANGE, changeText);
+			greenA.addEventListener(Event.CHANGE, changeText);
+			greenB.addEventListener(Event.CHANGE, changeText);
+			
 			iniciaTutorial();
+		}
+		
+		private var txtRegExp:RegExp = /^-?[0-9]*[.,]?[0-9]*/;
+		private function changeText(e:Event):void 
+		{
+			var txt:TextField = TextField(e.target);
+			//trace(txtRegExp.exec(txt.text));
+			txt.text = txtRegExp.exec(txt.text);
 		}
 		
 		private function focusIn(e:FocusEvent):void 
@@ -98,6 +117,7 @@
 			if (txt.text == "a" || txt.text == "b") {
 				txt.defaultTextFormat = normalFormat;
 				txt.text = "";
+				//txt.restrict = "\\-0123456789";
 			}
 		}
 		
@@ -219,26 +239,40 @@
 			
 			escolheRelacao.visible = false;
 			Actuate.tween(glassPane, 0.4, { /*scaleX:1, scaleY:1*/alpha:0 } );
-			Actuate.tween(escolheRelacao, 0.6, { scaleX:0, scaleY:0 } ).ease(Elastic.easeOut);
+			//Actuate.tween(escolheRelacao, 0.6, { width:0, height:0 } ).ease(Elastic.easeOut);
+			Actuate.tween(escolheRelacao, 0.6, { alpha:0} );
 		}
 		
 		private function cancelEscolheRelacao(e:MouseEvent):void 
 		{
 			escolheRelacao.visible = false;
 			Actuate.tween(glassPane, 0.4, { /*scaleX:1, scaleY:1*/alpha:0 } );
-			Actuate.tween(escolheRelacao, 0.6, { scaleX:0, scaleY:0 } ).ease(Elastic.easeOut);
+			//Actuate.tween(escolheRelacao, 0.6, { width:0, height:0 } ).ease(Elastic.easeOut);
+			Actuate.tween(escolheRelacao, 0.6, { alpha:0} );
 		}
 		
 		private var sortFunc:Function;
 		private function openEscolheRelacao(e:MouseEvent):void
 		{
-			if (e.target == reiniciaVermelha) sortFunc = sortVermelho;
-			else sortFunc = sortVerde;
+			if (e.target == reiniciaVermelha) {
+				if (respVerde.x == 0) {
+					sortVermelho();
+					return;
+				}
+				sortFunc = sortVermelho;
+			}else {
+				if (respVermelho.x == 0) {
+					sortVerde();
+					return;
+				}
+				sortFunc = sortVerde;
+			}
 			
 			escolheRelacao.nenhum.selected = true;
 			escolheRelacao.visible = true;
 			Actuate.tween(glassPane, 0.4, { /*scaleX:1, scaleY:1*/alpha:1 } );
-			Actuate.tween(escolheRelacao, 0.6, { scaleX:1, scaleY:1 } ).ease(Elastic.easeOut);
+			//Actuate.tween(escolheRelacao, 0.6, { width:widHeiRelacao.x, height:widHeiRelacao.y } ).ease(Elastic.easeOut);
+			Actuate.tween(escolheRelacao, 0.6, { alpha:1} );
 		}
 		
 		private function sortVermelho(relacao:String = "nenhum"):void 
@@ -266,7 +300,9 @@
 			redA.text = "a";
 			redB.text = "b";
 			TextField(redA).selectable = true;
+			TextField(redA).mouseEnabled = true;
 			TextField(redB).selectable = true;
+			TextField(redB).mouseEnabled = true;
 		}
 		
 		private function sortVerde(relacao:String = "nenhum"):void 
@@ -294,7 +330,9 @@
 			greenA.text = "a";
 			greenB.text = "b";
 			TextField(greenA).selectable = true;
+			TextField(greenA).mouseEnabled = true;
 			TextField(greenB).selectable = true;
+			TextField(greenB).mouseEnabled = true;
 		}
 		
 		private function getFunctionVermelha(relacao:String):GraphFunction 
@@ -356,8 +394,8 @@
 		private function finalVermelho(e:MouseEvent = null):void
 		{
 			if(redA.text != "a" && redB.text != "b"){
-				var respA:int = int(redA.text);
-				var respB:int = int(redB.text);
+				var respA:Number = Number(redA.text.replace(",", "."));
+				var respB:Number = Number(redB.text.replace(",", "."));
 				var feed:String = "";
 				
 				if (respA == respVermelho.x && respB == respVermelho.y) {
@@ -383,9 +421,12 @@
 				}
 				feedbackScreen.setText(feed);
 				
+				stage.focus = null;
 				certoErradoVermelho.visible = true;
 				TextField(redA).selectable = false;
+				TextField(redA).mouseEnabled = false;
 				TextField(redB).selectable = false;
+				TextField(redB).mouseEnabled = false;
 				unlock(reiniciaVermelha);
 				//lock(finalizaVermelha);
 			}else {
@@ -396,8 +437,8 @@
 		private function finalVerde(e:MouseEvent = null):void
 		{
 			if(greenA.text != "a" && greenB.text != "b"){
-				var respA:int = int(greenA.text);
-				var respB:int = int(greenB.text);
+				var respA:Number = Number(greenA.text.replace(",", "."));
+				var respB:Number = Number(greenB.text.replace(",", "."));
 				var feed:String = "";
 				
 				if (respA == respVerde.x && respB == respVerde.y) {
@@ -423,9 +464,12 @@
 				}
 				feedbackScreen.setText(feed);
 				
+				stage.focus = null;
 				certoErradoVerde.visible = true;
 				TextField(greenA).selectable = false;
+				TextField(greenA).mouseEnabled = false;
 				TextField(greenB).selectable = false;
+				TextField(greenB).mouseEnabled = false;
 				unlock(reiniciaVerde);
 				//lock(finalizaVerde);
 			}else {
