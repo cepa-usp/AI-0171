@@ -39,7 +39,7 @@ package BaseAssets
 		protected var feedbackScreen:FeedBackScreen;
 		protected var statsScreen:StatsScreen;
 		
-		private var glassPane:GlassPane;
+		protected var glassPane:GlassPane;
 		
 		/**
 		 * Atividade possui tela de desempenho?
@@ -75,7 +75,7 @@ package BaseAssets
 		//Camadas:
 		private var layerBorda:Sprite;
 		private var layerDebug:Sprite;
-		private var layerDialogo:Sprite;
+		protected var layerDialogo:Sprite;
 		private var layerGlass:Sprite;
 		protected var layerTuto:Sprite;
 		private var layerBlock:Sprite;

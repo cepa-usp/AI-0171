@@ -6,6 +6,8 @@
 	import cepa.graph.DataStyle;
 	import cepa.graph.GraphFunction;
 	import cepa.graph.rectangular.SimpleGraph;
+	import com.eclecticdesignstudio.motion.Actuate;
+	import com.eclecticdesignstudio.motion.easing.Elastic;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
@@ -59,15 +61,20 @@
 			greyFormatA.align = TextFormatAlign.RIGHT;
 			greyFormatB.align = TextFormatAlign.LEFT;
 			
+			layerDialogo.addChild(escolheRelacao);
+			escolheRelacao.visible = false;
+			escolheRelacao.scaleX = 0;
+			escolheRelacao.scaleY = 0;
+			
 			createGraph();
 			addListeners();
 			sortVermelho();
 			sortVerde();
 			
-			redA.restrict = "0123456789";
-			redB.restrict = "0123456789";
-			greenA.restrict = "0123456789";
-			greenB.restrict = "0123456789";
+			redA.restrict = "-0123456789";
+			redB.restrict = "-0123456789";
+			greenA.restrict = "-0123456789";
+			greenB.restrict = "-0123456789";
 			
 			redA.tabIndex = 0;
 			redB.tabIndex = 1;
@@ -193,15 +200,52 @@
 			finalizaVermelha.addEventListener(MouseEvent.CLICK, finalVermelho);
 			finalizaVerde.addEventListener(MouseEvent.CLICK, finalVerde);
 			
-			reiniciaVermelha.addEventListener(MouseEvent.CLICK, sortVermelho);
-			reiniciaVerde.addEventListener(MouseEvent.CLICK, sortVerde);
+			reiniciaVermelha.addEventListener(MouseEvent.CLICK, openEscolheRelacao);
+			reiniciaVerde.addEventListener(MouseEvent.CLICK, openEscolheRelacao);
+			
+			escolheRelacao.okBtn.addEventListener(MouseEvent.CLICK, okEscolheRelacao);
+			escolheRelacao.cancelBtn.addEventListener(MouseEvent.CLICK, cancelEscolheRelacao);
 		}
 		
-		private function sortVermelho(e:MouseEvent = null):void 
+		private function okEscolheRelacao(e:MouseEvent):void 
+		{
+			if (escolheRelacao.nenhum.selected) {
+				sortFunc();
+			}else if (escolheRelacao.paralelas.selected) {
+				sortFunc("paralelas");
+			}else {
+				sortFunc("perpendiculares");
+			}
+			
+			escolheRelacao.visible = false;
+			Actuate.tween(glassPane, 0.4, { /*scaleX:1, scaleY:1*/alpha:0 } );
+			Actuate.tween(escolheRelacao, 0.6, { scaleX:0, scaleY:0 } ).ease(Elastic.easeOut);
+		}
+		
+		private function cancelEscolheRelacao(e:MouseEvent):void 
+		{
+			escolheRelacao.visible = false;
+			Actuate.tween(glassPane, 0.4, { /*scaleX:1, scaleY:1*/alpha:0 } );
+			Actuate.tween(escolheRelacao, 0.6, { scaleX:0, scaleY:0 } ).ease(Elastic.easeOut);
+		}
+		
+		private var sortFunc:Function;
+		private function openEscolheRelacao(e:MouseEvent):void
+		{
+			if (e.target == reiniciaVermelha) sortFunc = sortVermelho;
+			else sortFunc = sortVerde;
+			
+			escolheRelacao.nenhum.selected = true;
+			escolheRelacao.visible = true;
+			Actuate.tween(glassPane, 0.4, { /*scaleX:1, scaleY:1*/alpha:1 } );
+			Actuate.tween(escolheRelacao, 0.6, { scaleX:1, scaleY:1 } ).ease(Elastic.easeOut);
+		}
+		
+		private function sortVermelho(relacao:String = "nenhum"):void 
 		{
 			if (funcVermelha != null) graph.removeFunction(funcVermelha);
 			
-			funcVermelha = getFunctionVermelha();
+			funcVermelha = getFunctionVermelha(relacao);
 			
 			graph.addFunction(funcVermelha, styleVermelha);
 			
@@ -225,11 +269,11 @@
 			TextField(redB).selectable = true;
 		}
 		
-		private function sortVerde(e:MouseEvent = null):void 
+		private function sortVerde(relacao:String = "nenhum"):void 
 		{
 			if (funcVerde != null) graph.removeFunction(funcVerde);
 			
-			funcVerde = getFunctionVerde();
+			funcVerde = getFunctionVerde(relacao);
 			
 			graph.addFunction(funcVerde, styleVerde);
 			
@@ -253,10 +297,21 @@
 			TextField(greenB).selectable = true;
 		}
 		
-		private function getFunctionVermelha():GraphFunction 
+		private function getFunctionVermelha(relacao:String):GraphFunction 
 		{
-			var sortA:int = Math.floor(Math.random() * 10) * (Math.random() > 0.5 ? 1 : -1);
-			var sortB:int = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			var sortA:Number;
+			var sortB:int;
+			
+			if(relacao == "nenhum"){
+				sortA = Math.floor(Math.random() * 10) * (Math.random() > 0.5 ? 1 : -1);
+				sortB = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			}else if (relacao == "paralelas") {
+				sortA = respVerde.x;
+				sortB = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			}else {
+				sortA = -1 / respVerde.x;
+				sortB = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			}
 			
 			var f:Function = function(x:Number):Number {
 				return sortA * x + sortB;
@@ -270,10 +325,21 @@
 			return func;
 		}
 		
-		private function getFunctionVerde():GraphFunction 
+		private function getFunctionVerde(relacao:String):GraphFunction 
 		{
-			var sortA:int = Math.floor(Math.random() * 10) * (Math.random() > 0.5 ? 1 : -1);
-			var sortB:int = Math.floor(Math.random() * 10) * (Math.random() > 0.5 ? 1 : -1);
+			var sortA:Number;
+			var sortB:int;
+			
+			if(relacao == "nenhum"){
+				sortA = Math.floor(Math.random() * 10) * (Math.random() > 0.5 ? 1 : -1);
+				sortB = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			}else if (relacao == "paralelas") {
+				sortA = respVermelho.x;
+				sortB = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			}else {
+				sortA = -1 / respVermelho.x;
+				sortB = Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+			}
 			
 			var f:Function = function(x:Number):Number {
 				return sortA * x + sortB;
