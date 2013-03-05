@@ -47,9 +47,9 @@
 		private var respVermelho:Point = new Point();
 		private var respVerde:Point = new Point();
 		
-		private var greyFormatA:TextFormat = new TextFormat("Times New Roman", 13, 0x8A8A8A);
-		private var greyFormatB:TextFormat = new TextFormat("Times New Roman", 13, 0x8A8A8A);
-		private var normalFormat:TextFormat = new TextFormat("Times New Roman", 13, 0x000000);
+		private var greyFormatA:TextFormat = new TextFormat("Arial", 16, 0x8A8A8A);
+		private var greyFormatB:TextFormat = new TextFormat("Arial", 16, 0x8A8A8A);
+		private var normalFormat:TextFormat = new TextFormat("Arial", 16, 0x000000);
 		
 		public function Main() 
 		{
@@ -397,28 +397,51 @@
 				var respA:Number = Number(redA.text.replace(",", "."));
 				var respB:Number = Number(redB.text.replace(",", "."));
 				var feed:String = "";
+				var correto:Boolean = false;
+				var tolerancia = 1 / 100;
+				var respVermelhoA:String;
+				var respVermelhoB:String;
 				
-				if (respA == respVermelho.x && respB == respVermelho.y) {
+				if (respVermelho.x.toString().indexOf(".") != -1 && respVermelho.y.toString().indexOf(".") != -1) {
+					if (Math.abs(respA - respVermelho.x) <= Math.abs(respVermelho.x * tolerancia) && Math.abs(respB - respVermelho.y) <= Math.abs(respVermelho.y * tolerancia)) correto = true;
+					respVermelhoA = respVermelho.x.toFixed(2);
+					respVermelhoB = respVermelho.y.toFixed(2);
+				}else if (respVermelho.x.toString().indexOf(".") != -1) {
+					if (Math.abs(respA - respVermelho.x) <= Math.abs(respVermelho.x * tolerancia) && respB == respVermelho.y) correto = true;
+					respVermelhoA = respVermelho.x.toFixed(2);
+					respVermelhoB = respVermelho.y.toString()
+				}else if (respVermelho.y.toString().indexOf(".") != -1 ) {
+					if (respA == respVermelho.x && Math.abs(respB - respVermelho.y) <= Math.abs(respVermelho.y * tolerancia)) correto = true;
+					respVermelhoA = respVermelho.x.toString();
+					respVermelhoB = respVermelho.y.toFixed(2);
+				}else {
+					if (respA == respVermelho.x && respB == respVermelho.y) correto = true;
+					respVermelhoA = respVermelho.x.toString();
+					respVermelhoB = respVermelho.y.toString();
+				}
+				
+				if (correto) {
 					//Certo
 					feed = "Correto!";
 					certoErradoVermelho.gotoAndStop(2);
 				}else {
 					//Errado
 					certoErradoVermelho.gotoAndStop(1);
-					respostaVermelho.resp.text = "Resposta: y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y;
+					respostaVermelho.resp.text = "Resposta: y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB;
 					respostaVermelho.visible = true;
 					
 					if (respA != respVermelho.x && respB != respVermelho.y) {
 						//Errou os 2
-						feed = "Ops! A resposta esperada é y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}else if (respA == respVermelho.x) {
 						//Acertou a
-						feed = "Ops! A resposta esperada é y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
 					}else {
 						//Acertou b
-						feed = "Ops! A resposta esperada é y(x) = " + respVermelho.x + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelho.y + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}
 				}
+				
 				feedbackScreen.setText(feed);
 				
 				stage.focus = null;
@@ -440,26 +463,48 @@
 				var respA:Number = Number(greenA.text.replace(",", "."));
 				var respB:Number = Number(greenB.text.replace(",", "."));
 				var feed:String = "";
+				var correto:Boolean = false;
+				var tolerancia = 1 / 100;
+				var respVerdeA:String;
+				var respVerdeB:String;
 				
-				if (respA == respVerde.x && respB == respVerde.y) {
+				if (respVerde.x.toString().indexOf(".") != -1 && respVerde.y.toString().indexOf(".") != -1) {
+					if (Math.abs(respA - respVerde.x) <= Math.abs(respVerde.x * tolerancia) && Math.abs(respB - respVerde.y) <= Math.abs(respVerde.y * tolerancia)) correto = true;
+					respVerdeA = respVerde.x.toFixed(2);
+					respVerdeB = respVerde.y.toFixed(2);
+				}else if (respVerde.x.toString().indexOf(".") != -1) {
+					if (Math.abs(respA - respVerde.x) <= Math.abs(respVerde.x * tolerancia) && respB == respVerde.y) correto = true;
+					respVerdeA = respVerde.x.toFixed(2);
+					respVerdeB = respVerde.y.toString();
+				}else if (respVerde.y.toString().indexOf(".") != -1 ) {
+					if (respA == respVerde.x && Math.abs(respB - respVerde.y) <= Math.abs(respVerde.y * tolerancia)) correto = true;
+					respVerdeA = respVerde.x.toString();
+					respVerdeB = respVerde.y.toFixed(2);
+				}else {
+					if (respA == respVerde.x && respB == respVerde.y) correto = true;
+					respVerdeA = respVerde.x.toString();
+					respVerdeB = respVerde.y.toString();
+				}
+				
+				if (correto) {
 					//Certo
 					feed = "Correto!";
 					certoErradoVerde.gotoAndStop(2);
 				}else {
 					//Errado
 					certoErradoVerde.gotoAndStop(1);
-					respostaVerde.resp.text = "Resposta: y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y;
+					respostaVerde.resp.text = "Resposta: y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB;
 					respostaVerde.visible = true;
 					
 					if (respA != respVerde.x && respB != respVerde.y) {
 						//Errou os 2
-						feed = "Ops! A resposta esperada é y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}else if (respA == respVerde.x) {
 						//Acertou a
-						feed = "Ops! A resposta esperada é y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
+						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
 					}else {
 						//Acertou b
-						feed = "Ops! A resposta esperada é y(x) = " + respVerde.x + "x" + (respVerde.y >= 0 ? "+" : "") + respVerde.y + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}
 				}
 				feedbackScreen.setText(feed);
