@@ -432,13 +432,13 @@
 					
 					if (respA != respVermelho.x && respB != respVermelho.y) {
 						//Errou os 2
-						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA.replace(".", ",") + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB.replace(".", ",") + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}else if (respA == respVermelho.x) {
 						//Acertou a
-						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA.replace(".", ",") + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB.replace(".", ",") + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
 					}else {
 						//Acertou b
-						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVermelhoA.replace(".", ",") + "x" + (respVermelho.y >= 0 ? "+": "") + respVermelhoB.replace(".", ",") + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}
 				}
 				
@@ -498,13 +498,13 @@
 					
 					if (respA != respVerde.x && respB != respVerde.y) {
 						//Errou os 2
-						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA.replace(".", ",") + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB.replace(".", ",") + ", ou seja, tanto o coeficiente linear como o angular estão errados. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se:\n- O coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y.\n- O coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}else if (respA == respVerde.x) {
 						//Acertou a
-						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
+						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA.replace(".", ",") + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB.replace(".", ",") + ", ou seja, o coeficiente LINEAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente linear é igual ao valor da função em x = 0, isto é, quando ela cruza o eixo y";
 					}else {
 						//Acertou b
-						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
+						feed = "Ops! A resposta esperada é y(x) = " + respVerdeA.replace(".", ",") + "x" + (respVerde.y >= 0 ? "+" : "") + respVerdeB.replace(".", ",") + ", ou seja, o coeficiente ANGULAR está errado. Compare sua resposta com a esperada (ela será exibida junto da sua), reveja o gráfico e lembre-se: o coeficiente angular de uma função do primeiro grau é igual à inclinação da reta com relação ao eixo x, definida como Δy/Δx."
 					}
 				}
 				feedbackScreen.setText(feed);
